@@ -1,0 +1,45 @@
+package vn.hoidanit.laptopshop.domain;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    private double totalPrice;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Order(long id, double totalPrice) {
+        this.id = id;
+        this.totalPrice = totalPrice;
+    }
+
+    public Order() {
+    }
+
+    @Override
+    public String toString() {
+        return "Order [id=" + id + ", totalPrice=" + totalPrice + "]";
+    }
+
+}
