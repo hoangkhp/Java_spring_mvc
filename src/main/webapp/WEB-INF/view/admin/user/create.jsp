@@ -43,7 +43,8 @@
                     <div class="col-md-6 col-12 mx-auto">
                       <h3>Create a user</h3>
                       <hr />
-                      <form:form method="post" action="/admin/user/create" modelAttribute="newUser" class="row">
+                      <form:form method="post" action="/admin/user/create" modelAttribute="newUser" class="row"
+                        enctype="multipart/form-data">
                         <div class="mb-3 col-12 col-md-6">
                           <label class="form-label">Email:</label>
                           <form:input type="email" class="form-control" path="email" />
@@ -66,15 +67,16 @@
                         </div>
                         <div class="mb-3 col-12 col-md-6">
                           <label class="form-label">Role:</label>
-                          <select class="form-select">
-                            <option value=""> Select Role: </option>
-                            <option value="ADMIN"> Admin</option>
-                            <option value="USER"> User</option>
-                          </select>
+                          <form:select class="form-select" path="role.name">
+                            <form:option value="ADMIN"> Admin</form:option>
+                            <form:option value="USER"> User</form:option>
+                          </form:select>
                         </div>
                         <div class="mb-3 col-12 col-md-6">
                           <label for="formFile" class="form-label">Avatar:</label>
-                          <input class="form-control" type="file" id="avatarFile" accept=".png, .jpeg, .jpg" />
+                          <input class="form-control" type="file" id="avatarFile" accept=".png, .jpeg, .jpg"
+                            name="hoidanitFile" />
+                          <!-- truyen vao name de phia controller lay duoc file tu name nay -->
                         </div>
                         <div class="col-12 mb-13">
                           <img style="max-height: 250px; display: none;" src="" alt="avatar preview" id="avatarPreview">
