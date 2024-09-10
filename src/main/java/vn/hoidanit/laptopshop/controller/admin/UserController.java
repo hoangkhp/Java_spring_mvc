@@ -1,12 +1,9 @@
 package vn.hoidanit.laptopshop.controller.admin;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
 
-import org.apache.tomcat.util.log.UserDataHelper.Mode;
+import java.util.List;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,12 +26,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserController {
 
     private final UserService userService;
+    //upload du lieu avatar service
     private final UploadService uploadService;
+    //hash Password du lieu
+    private PasswordEncoder passwordEncoder;
     
 
-    public UserController(UserService userService, UploadService uploadService) {
+    public UserController(UserService userService, UploadService uploadService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.uploadService = uploadService;
+        this.passwordEncoder =  passwordEncoder;
     }
 
     @RequestMapping("/")
@@ -75,6 +76,11 @@ public class UserController {
         
         // relative path: absolute path
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
+        String hashPassword = this.passwordEncoder.encode(hoidanit.getPassword());
+        hoidanit.setAvatar(avatar);
+        hoidanit.setPassword(hashPassword);
+        // ham get dau tien tra ve doi tuong role, get thu 2 tra ve name cua role
+        hoidanit.setRole(this.userService.getRoleByName(hoidanit.getRole().getName()));
         this.userService.handleSaveUser(hoidanit);
         return "redirect:/admin/user";
         // khi redirect no se mapping len code /admin/user va chay lai
@@ -86,7 +92,7 @@ public class UserController {
         model.addAttribute("newUser", currentUser);
         return "admin/user/update";
     }
-
+ 
     @PostMapping("/admin/user/update")
     public String postUpdateUser(Model model, @ModelAttribute("newUser") User hoidanit) {
         User currentUser = this.userService.getUserById(hoidanit.getId());

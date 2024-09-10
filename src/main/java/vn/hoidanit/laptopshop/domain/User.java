@@ -20,7 +20,7 @@ public class User {
     private long id;
     private String email, password, fullName, address, phone, avatar;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
     //role la 1 doi tuong, khong phai chuoi String
