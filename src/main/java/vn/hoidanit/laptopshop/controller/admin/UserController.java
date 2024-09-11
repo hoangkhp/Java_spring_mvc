@@ -6,6 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.ServletContext;
+import jakarta.validation.Valid;
 import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.repository.UserRepository;
 import vn.hoidanit.laptopshop.service.UploadService;
@@ -70,10 +73,21 @@ public class UserController {
 
     // ham nay dung de lay data
     @PostMapping("/admin/user/create")
-    public String createUserPage(Model model, @ModelAttribute("newUser") User hoidanit, @RequestParam("hoidanitFile") MultipartFile file) {
+    public String createUserPage(Model model, @ModelAttribute("newUser") @Valid User hoidanit, BindingResult newUserBindingResult, @RequestParam("hoidanitFile") MultipartFile file) {
         // hieu du lieu la User, ten bien la hoidanit, newUser la thuoc tinh ma view
         // truyen den
-        
+        //validate
+
+        List<FieldError> errors = newUserBindingResult.getFieldErrors();
+            for (FieldError error : errors ) {
+            System.out.println (">>>>" + error.getField() + " - " + error.getDefaultMessage());
+        }
+
+        if (newUserBindingResult.hasErrors()){
+            //neu redirect se lam mat thong bao loi
+            return "/admin/user/create";
+        }
+
         // relative path: absolute path
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
         String hashPassword = this.passwordEncoder.encode(hoidanit.getPassword());
