@@ -34,7 +34,7 @@
                                             <h3>Update a user</h3>
                                             <hr />
                                             <form:form method="post" action="/admin/user/update"
-                                                modelAttribute="newUser">
+                                                modelAttribute="newUser" enctype="multipart/form-data">
 
                                                 <div class="mb-3" style="display: none;">
                                                     <label class="form-label">Id:</label>
@@ -58,6 +58,17 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Address:</label>
                                                     <form:input type="text" class="form-control" path="address" />
+                                                </div>
+
+                                                <div class="mb-3 col-12 col-md-6">
+                                                    <label for="formFile" class="form-label">Avatar:</label>
+                                                    <input class="form-control" type="file" id="avatarFile"
+                                                        accept=".png, .jpeg, .jpg" name="hoidanitFile" path="avatar" />
+                                                </div>
+
+                                                <div class="col-12 mb-13">
+                                                    <img style="max-height: 250px; display: none;" src=""
+                                                        alt="avatar preview" id="avatarPreview">
                                                 </div>
 
                                                 <button type="submit" class="btn btn-warning">Update</button>
