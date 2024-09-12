@@ -7,6 +7,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "products")
@@ -16,14 +20,32 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotNull
+    @NotEmpty(message = "Do not leave the product name blank")
     private String name;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     private double price;
+
     private String image;
+
+    @NotNull
+    @NotEmpty(message = "Detail Description can't be null")
     private String detailDesc;
+
+    @NotNull
+    @NotEmpty(message = "Short Description can't be null")
     private String shortDesc;
+
+    @NotNull(message = "Quantity can't be null")
+    @Min(value = 1, message = "To must be greater than zero or equal 1")
     private long quantity;
+    
     private long sold;
+    
     private String factory;
+    
     private String target;
 
     public long getId() {

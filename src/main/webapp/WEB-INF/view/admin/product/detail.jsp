@@ -10,7 +10,7 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
                 <meta name="description" content="Hỏi Dân IT - Dự án laptopshop" />
                 <meta name="author" content="Hỏi Dân IT" />
-                <title>Delete Product - Hỏi Dân IT</title>
+                <title>Detail User - Hỏi Dân IT</title>
                 <link href="/css/styles.css" rel="stylesheet" />
 
                 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -27,28 +27,31 @@
                                 <ol class="breadcrumb mb-4">
                                     <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
                                     <li class="breadcrumb-item"><a href="/admin/product">Product</a></li>
-                                    <li class="breadcrumb-item active">Delete</li>
+                                    <li class="breadcrumb-item active">View detail</li>
                                 </ol>
-                                <div class=" mt-5">
+                                <div class="container mt-5">
                                     <div class="row">
                                         <div class="col-12 mx-auto">
                                             <div class="d-flex justify-content-between">
-                                                <h3>Delete the product with id = ${id}</h3>
+                                                <h3>Product detail with id = ${id}</h3>
                                             </div>
 
                                             <hr />
-                                            <div class="alert alert-danger">
-                                                Are you sure to delete this product ?
-                                            </div>
-                                            <form:form method="post" action="/admin/product/delete"
-                                                modelAttribute="newProduct">
-                                                <div class="mb-3" style="display: none;">
-                                                    <label class="form-label">Id:</label>
-                                                    <form:input value="${id}" type="text" class="form-control"
-                                                        path="id" />
+
+                                            <div class="card" style="width: 60%">
+                                                <img class="card-img-top" src="/images/product/${product.image}"
+                                                    alt="Card image cap">
+
+                                                <div class="card-header">
+                                                    Product information
                                                 </div>
-                                                <button class="btn btn-danger">Confirm</button>
-                                            </form:form>
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">ID: ${product.id}</li>
+                                                    <li class="list-group-item">Name: ${product.name}</li>
+                                                    <li class="list-group-item">Price: ${product.price}</li>
+                                                </ul>
+                                            </div>
+                                            <a href="/admin/product" class="btn btn-success mt-3">Back</a>
 
                                         </div>
 

@@ -89,7 +89,7 @@ public class UserController {
         }
 
         // relative path: absolute path
-        String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
+        String avatar = this.uploadService.handleSaveUploadFile(file, "product");
         String hashPassword = this.passwordEncoder.encode(hoidanit.getPassword());
         hoidanit.setAvatar(avatar);
         hoidanit.setPassword(hashPassword);
