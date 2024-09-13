@@ -85,7 +85,7 @@ public class UserController {
 
         if (newUserBindingResult.hasErrors()){
             //neu redirect se lam mat thong bao loi
-            return "/admin/user/create";
+            return "admin/user/create";
         }
 
         // relative path: absolute path
