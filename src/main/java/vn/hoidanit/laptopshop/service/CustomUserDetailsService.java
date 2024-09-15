@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService{
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
 
@@ -18,20 +18,18 @@ public class CustomUserDetailsService implements UserDetailsService{
         this.userService = userService;
     }
 
-    //function ghi de spring sercurity
-    //Kieu user detail chu ko phai user
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         vn.hoidanit.laptopshop.domain.User user = this.userService.getUserByEmail(username);
-        //username = email
-        if(user ==null){
-            throw new UsernameNotFoundException("User not found");
+        if (user == null) {
+            throw new UsernameNotFoundException("user not found");
         }
-         return new User(
-            user.getEmail(),
-            user.getPassword(),
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())));
+
+        return new User(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())));
 
     }
-    
+
 }

@@ -15,7 +15,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository,
+            RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
@@ -28,44 +29,37 @@ public class UserService {
         return this.userRepository.findOneByEmail(email);
     }
 
-    public String handleHello() {
-        return "Hello from service";
-    }
-
     public User handleSaveUser(User user) {
         User eric = this.userRepository.save(user);
         System.out.println(eric);
         return eric;
     }
 
-    public User getUserById(long Id) {
-        User eric = this.userRepository.findUserById(Id);
-        return eric;
+    public User getUserById(long id) {
+        return this.userRepository.findById(id);
     }
 
     public void deleteAUser(long id) {
         this.userRepository.deleteById(id);
     }
 
-    public Role getRoleByName(String name){
+    public Role getRoleByName(String name) {
         return this.roleRepository.findByName(name);
     }
 
-    //function nhan vao registerDTO tra ra mot User co dung tieu chuan data
-    public User registerDTOtoUser(RegisterDTO registerDTO){
+    public User registerDTOtoUser(RegisterDTO registerDTO) {
         User user = new User();
-
         user.setFullName(registerDTO.getFirstName() + " " + registerDTO.getLastName());
         user.setEmail(registerDTO.getEmail());
         user.setPassword(registerDTO.getPassword());
         return user;
     }
 
-    public boolean checkEmailExist(String email){
+    public boolean checkEmailExist(String email) {
         return this.userRepository.existsByEmail(email);
     }
 
-    public User getUserByEmail(String email){
+    public User getUserByEmail(String email) {
         return this.userRepository.findByEmail(email);
     }
 }

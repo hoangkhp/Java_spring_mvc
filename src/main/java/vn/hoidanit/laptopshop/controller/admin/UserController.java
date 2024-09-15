@@ -1,50 +1,41 @@
 package vn.hoidanit.laptopshop.controller.admin;
 
-
 import java.util.List;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.ServletContext;
 import jakarta.validation.Valid;
 import vn.hoidanit.laptopshop.domain.User;
-import vn.hoidanit.laptopshop.repository.UserRepository;
 import vn.hoidanit.laptopshop.service.UploadService;
 import vn.hoidanit.laptopshop.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class UserController {
 
     private final UserService userService;
-    //upload du lieu avatar service
     private final UploadService uploadService;
-    //hash Password du lieu
-    private PasswordEncoder passwordEncoder;
-    
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, UploadService uploadService, PasswordEncoder passwordEncoder) {
+    public UserController(
+            UploadService uploadService,
+            UserService userService,
+            PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.uploadService = uploadService;
-        this.passwordEncoder =  passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping("/")
     public String getHomePage(Model model) {
-        List<User> arrUsers = this.userService.getAllUsers();
+        List<User> arrUsers = this.userService.getAllUsersByEmail("1@gmail.com");
         System.out.println(arrUsers);
+
         model.addAttribute("eric", "test");
         model.addAttribute("hoidanit", "from controller with model");
         return "hello";
@@ -57,7 +48,7 @@ public class UserController {
         return "admin/user/show";
     }
 
-    @RequestMapping("/admin/user/{id}") // lay them so id o ben tren xong nem xuong duoi
+    @RequestMapping("/admin/user/{id}")
     public String getUserDetailPage(Model model, @PathVariable long id) {
         User user = this.userService.getUserById(id);
         model.addAttribute("user", user);
@@ -65,65 +56,75 @@ public class UserController {
         return "admin/user/detail";
     }
 
-    @GetMapping("/admin/user/create")
+    @GetMapping("/admin/user/create") // GET
     public String getCreateUserPage(Model model) {
         model.addAttribute("newUser", new User());
         return "admin/user/create";
     }
 
-    // ham nay dung de lay data
-    @PostMapping("/admin/user/create")
-    public String createUserPage(Model model, @ModelAttribute("newUser") @Valid User hoidanit, BindingResult newUserBindingResult, @RequestParam("hoidanitFile") MultipartFile file) {
-        // hieu du lieu la User, ten bien la hoidanit, newUser la thuoc tinh ma view
-        // truyen den
-        //validate
+    @PostMapping(value = "/admin/user/create")
+    public String createUserPage(Model model,
+            @ModelAttribute("newUser") @Valid User hoidanit,
+            BindingResult newUserBindingResult,
+            @RequestParam("hoidanitFile") MultipartFile file) {
 
-        List<FieldError> errors = newUserBindingResult.getFieldErrors();
-            for (FieldError error : errors ) {
-            System.out.println (">>>>" + error.getField() + " - " + error.getDefaultMessage());
-        }
+        // List<FieldError> errors = newUserBindingResult.getFieldErrors();
+        // for (FieldError error : errors) {
+        // System.out.println(">>>>" + error.getField() + " - " +
+        // error.getDefaultMessage());
+        // }
 
-        if (newUserBindingResult.hasErrors()){
-            //neu redirect se lam mat thong bao loi
+        // validate
+        if (newUserBindingResult.hasErrors()) {
             return "admin/user/create";
         }
 
-        // relative path: absolute path
-        String avatar = this.uploadService.handleSaveUploadFile(file, "product");
+        //
+        String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
         String hashPassword = this.passwordEncoder.encode(hoidanit.getPassword());
+
         hoidanit.setAvatar(avatar);
         hoidanit.setPassword(hashPassword);
-        // ham get dau tien tra ve doi tuong role, get thu 2 tra ve name cua role
         hoidanit.setRole(this.userService.getRoleByName(hoidanit.getRole().getName()));
+        // save
         this.userService.handleSaveUser(hoidanit);
         return "redirect:/admin/user";
-        // khi redirect no se mapping len code /admin/user va chay lai
     }
 
-    @RequestMapping("/admin/user/update/{id}")
+    @RequestMapping("/admin/user/update/{id}") // GET
     public String getUpdateUserPage(Model model, @PathVariable long id) {
         User currentUser = this.userService.getUserById(id);
         model.addAttribute("newUser", currentUser);
         return "admin/user/update";
     }
- 
+
     @PostMapping("/admin/user/update")
-    public String postUpdateUser(Model model, @ModelAttribute("newUser") User hoidanit, @RequestParam("hoidanitFile") MultipartFile file) {
-        User currentUser = this.userService.getUserById(hoidanit.getId());
-        String avatar = this.uploadService.handleSaveUploadFile(file, hoidanit.getAvatar());
-        if (currentUser != null) {
-            currentUser.setAddress(hoidanit.getAddress());
-            currentUser.setFullName(hoidanit.getFullName());
-            currentUser.setPhone(hoidanit.getPhone());
+public String postUpdateUser(Model model, @ModelAttribute("newUser") User hoidanit,
+    @RequestParam("hoidanitFile") MultipartFile file) {
+
+    User currentUser = this.userService.getUserById(hoidanit.getId());
+
+    if (currentUser != null) {
+        currentUser.setAddress(hoidanit.getAddress());
+        currentUser.setFullName(hoidanit.getFullName());
+        currentUser.setPhone(hoidanit.getPhone());
+
+        if (file != null && !file.isEmpty()) {
+            // Gọi phương thức lưu tệp và lấy đường dẫn hoặc tên tệp mới
+            String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
             currentUser.setAvatar(avatar);
-            this.userService.handleSaveUser(currentUser);
         }
-        return "redirect:/admin/user";
+
+        this.userService.handleSaveUser(currentUser);
     }
 
+    return "redirect:/admin/user";
+}
     @GetMapping("/admin/user/delete/{id}")
     public String getDeleteUserPage(Model model, @PathVariable long id) {
         model.addAttribute("id", id);
+        // User user = new User();
+        // user.setId(id);
         model.addAttribute("newUser", new User());
         return "admin/user/delete";
     }
