@@ -70,5 +70,18 @@ public class CartDetail {
         this.product = product;
     }
 
+    public CartDetail(long id, long quantity, double price, Cart cart, Product product) {
+        this.id = id;
+        this.quantity = quantity;
+        this.price = price;
+        this.cart = cart;
+        this.product = product;
+    }
+
+    public CartDetail() {
+    }
+
+    
+    
 }
 
